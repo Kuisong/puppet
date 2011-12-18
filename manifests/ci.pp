@@ -6,6 +6,6 @@ node default {
     }
 
     include nginx
-    nginx::resource::vhost { $host : ensure => present, proxy => 'http://127.0.0
+    nginx::resource::vhost { 'ci2.polyforms.org' : ensure => present, proxy => 'http://127.0.0
 .1:8080/', } 
 }
