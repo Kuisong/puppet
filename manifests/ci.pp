@@ -4,14 +4,14 @@ node default {
         "git-plugin" :
             name => "git",
             require => Class["jenkins::package"],
-            notify => Class['jenkins::service'],
+            notify => Class["jenkins::service"],
     }
 
     include nginx
     nginx::resource::vhost { 
-        'ci2.polyforms.org' : 
+        "_" : 
 	    ensure => present, 
-	    proxy => 'http://127.0.0.1:8080/',
+	    proxy => "http://127.0.0.1:8080/",
             require => Class["jenkins::service"],
     } 
 }
