@@ -12,5 +12,5 @@ install()
 install puppet
 
 wget -P /home/ubuntu https://raw.github.com/Kuisong/puppet/master/manifests/bootstrap.pp
-puppet apply --environment=master --manifest=ci.pp /home/ubuntu/bootstrap.pp
+puppet apply /home/ubuntu/bootstrap.pp
 
