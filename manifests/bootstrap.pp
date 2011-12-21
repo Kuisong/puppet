@@ -4,21 +4,14 @@ class git {
     }
 }
 
-define puppet-apply($manifest) {
-    exec {
-        "apply puppet configuration":
-        cwd => "/home/ubuntu/puppet",
-        user => "ubuntu",
-        command => 'sudo /usr/bin/puppet apply --modulepath=modules $manifest',
-    }
-}
+node default {
+    include git
 
-define git-clone($source, $branch="master") {
     exec {
         "clone git repository":
         cwd => "/home/ubuntu",
         user => "ubuntu",
-        command => '/usr/bin/git clone $source puppet',
+        command => '/usr/bin/git clone http://github.com/Kuisong/puppet puppet',
         require => Class["git"]
     }
 
@@ -26,7 +19,7 @@ define git-clone($source, $branch="master") {
         "checkout git branch":
         cwd => "/home/ubuntu/puppet",
         user => "ubuntu",
-        command => '/usr/bin/git checkout $branch',
+        command => '/usr/bin/git checkout $environment',
         require => Class["git"]
     }
 
@@ -37,10 +30,11 @@ define git-clone($source, $branch="master") {
         command => '/usr/bin/git submodule update --init',
         require => Class["git"]
     }
-}
 
-node default {
-    include git
-    git-clone("http://github.com/Kuisong/puppet", $environment)
-    puppet-apply($manifest)
+    exec {
+        "apply puppet configuration":
+        cwd => "/home/ubuntu/puppet",
+        user => "ubuntu",
+        command => 'sudo /usr/bin/puppet apply --modulepath=modules manifests/$manifest',
+    }
 }
