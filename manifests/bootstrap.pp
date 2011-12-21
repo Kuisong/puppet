@@ -1,8 +1,3 @@
-node default {
-    include git   
-    git-clone("http://github.com/Kuisong/puppet", $environment)
-}
-
 class git {
     package { 'git-core':
         ensure => installed,
@@ -42,4 +37,10 @@ define git-clone($source, $branch="master") {
         command => '/usr/bin/git submodule update --init',
         require => Class["git"]
     }
+}
+
+node default {
+    include git
+    git-clone("http://github.com/Kuisong/puppet", $environment)
+    puppet-apply($manifest)
 }
