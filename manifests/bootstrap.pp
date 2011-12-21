@@ -1,14 +1,14 @@
 class git {
-    package { 'git-core':
-        ensure => installed,
-    }
+     package { 'git':
+         ensure => installed,
+     }
 }
 
 node default {
     include git
 
     exec {
-        "clone git repository":
+        "clone":
         cwd => "/home/ubuntu",
         user => "ubuntu",
         command => '/usr/bin/git clone http://github.com/Kuisong/puppet puppet',
@@ -16,25 +16,26 @@ node default {
     }
 
     exec {
-        "checkout git branch":
+        "checkout":
         cwd => "/home/ubuntu/puppet",
         user => "ubuntu",
-        command => '/usr/bin/git checkout $environment',
-        require => Class["git"]
+        command => '/usr/bin/git checkout master',
+        require => Exec["clone"]
     }
 
     exec {
-        "update git submodule":
+        "update submodule":
         cwd => "/home/ubuntu/puppet",
         user => "ubuntu",
         command => '/usr/bin/git submodule update --init',
-        require => Class["git"]
+        require => Exec["checkout"],
     }
 
     exec {
-        "apply puppet configuration":
-        cwd => "/home/ubuntu/puppet",
-        user => "ubuntu",
-        command => 'sudo /usr/bin/puppet apply --modulepath=modules manifests/$manifest',
+        "apply puppet":
+        cwd => "/home/ubuntu",
+        user => "root",
+        command => "/usr/bin/puppet apply --modulepath=/home/ubuntu/puppet/modules /home/ubuntu/puppet/manifests/ci.pp",
+        require => Exec["update submodule"],
     }
 }
